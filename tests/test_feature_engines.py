@@ -57,6 +57,15 @@ class MacroEngineTests(unittest.TestCase):
         self.assertEqual(engine.update({30: 60}, now=1.05), {"A"})
         self.assertEqual(engine.update({30: 0}, now=1.11), set())
 
+    def test_macro_cancel_clears_pending_actions(self) -> None:
+        engine = MacroEngine([{
+            "scan": 30, "threshold": 50,
+            "steps": [{"action": "A", "duration_ms": 500, "delay_ms": 0}],
+        }])
+        self.assertEqual(engine.update({30: 50}, now=1.0), {"A"})
+        engine.cancel_all()
+        self.assertEqual(engine.update({30: 50}, now=1.1), set())
+
     def test_macro_waits_until_configured_threshold(self) -> None:
         engine = MacroEngine([{
             "scan": 30,
