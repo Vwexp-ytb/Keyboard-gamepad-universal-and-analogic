@@ -16,6 +16,14 @@ L’installateur déploie les deux applications, mais **n’installe pas ViGEmBu
 
 ---
 
+## Fiabilité, diagnostics et compatibilité
+
+Le moteur propose des utilitaires de calibration analogique par touche (`gamepad_app.core.analog`) et un filtre d'hystérésis pour éviter les changements d'état dus au bruit autour d'un seuil. Le résolveur SOCD accepte les modes `last_input`, `first_input`, `neutral` et `up_priority`; la politique se configure par profil via `socd.mode` et `socd.pairs`. Les paires non verticales utilisent une sortie neutre en mode `up_priority` afin de ne pas inventer de priorité.
+
+Le module `gamepad_app.core.diagnostics` fournit un échantillonneur de latence borné avec moyenne, P50, P95, P99 et maximum, ainsi qu'un micro-benchmark pour les fonctions isolées. Ces outils ne sont pas automatiquement exécutés dans la boucle de jeu. Ils mesurent le temps de code; **ils ne constituent pas à eux seuls une mesure de bout en bout clavier-vers-manette**.
+
+Le statut de compatibilité est spécifique au chemin de lecture, au modèle et au firmware. La présence d'un clavier à switches Hall Effect ne garantit pas que ses valeurs analogiques soient accessibles à un logiciel tiers. La feuille de route et les critères de validation se trouvent dans [la roadmap d'ingénierie](docs/roadmap.md). Les signalements de sécurité sont décrits dans [SECURITY.md](SECURITY.md).
+
 ## Démarrage
 
 1. Installez Python 3.12 et le pilote ViGEmBus requis par `vgamepad`.
