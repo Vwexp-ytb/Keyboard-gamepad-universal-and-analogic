@@ -66,7 +66,6 @@ jobs:
             dist/ACE60-Gamepad-GUI.exe
             dist/installers/*.exe
             dist/SHA256SUMS.txt
-            dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7
       - name: Publish GitHub Release
@@ -79,3 +78,4 @@ jobs:
             dist/ACE60-Gamepad-CLI.exe
             dist/ACE60-Gamepad-GUI.exe
             dist/installers/*.exe
+            dist/SHA256SUMS.txt
