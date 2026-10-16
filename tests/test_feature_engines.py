@@ -57,13 +57,14 @@ class MacroEngineTests(unittest.TestCase):
         self.assertEqual(engine.update({30: 60}, now=1.05), {"A"})
         self.assertEqual(engine.update({30: 0}, now=1.11), set())
 
-    def test_macro_does_not_trigger_without_crossing(self) -> None:
+    def test_macro_waits_until_configured_threshold(self) -> None:
         engine = MacroEngine([{
             "scan": 30,
-            "threshold": 60,
+            "threshold": 90,
             "steps": [{"action": "B", "duration_ms": 50, "delay_ms": 0}],
         }])
-        self.assertEqual(engine.update({30: 80}, now=1.0), {"B"})
+        self.assertEqual(engine.update({30: 80}, now=1.0), set())
+        self.assertEqual(engine.update({30: 85}, now=1.1), set())
 
 
 if __name__ == "__main__":
