@@ -143,6 +143,7 @@ def open_generic_device(vid: int, pid: int) -> tuple[Any, HIDReportDescriptor]:
     """Open a HID-compliant keyboard that exposes analog keys as variable values."""
     try:
         import hid
+        HIDException = getattr(hid, "HIDException", OSError)
     except ImportError as exc:
         raise RuntimeError("Dépendance hidapi manquante.") from exc
     candidates = hid.enumerate(vid, pid)
@@ -156,11 +157,11 @@ def open_generic_device(vid: int, pid: int) -> tuple[Any, HIDReportDescriptor]:
                 LOGGER.info("Interface HID générique ouverte: interface=%s", info.get("interface_number"))
                 return dev, descriptor
             dev.close()
-        except (OSError, IOError, AttributeError, ValueError, hid.HIDException) as exc:
+        except (OSError, IOError, AttributeError, ValueError, HIDException) as exc:
             LOGGER.debug("Interface HID non compatible ignorée (%s): %s", info.get("interface_number"), exc)
             try:
                 dev.close()
-            except (OSError, hid.HIDException):
+            except (OSError, HIDException):
                 LOGGER.debug("Fermeture d'une interface HID ignorée impossible", exc_info=True)
     raise RuntimeError("Aucun rapport HID standard avec des touches analogiques n'a été détecté.")
 
@@ -185,6 +186,7 @@ def probe_keyboard_interface(info: dict[str, Any]) -> str:
         return "ace60"
     try:
         import hid
+        HIDException = getattr(hid, "HIDException", OSError)
     except ImportError:
         return "unsupported"
     try:
@@ -194,7 +196,7 @@ def probe_keyboard_interface(info: dict[str, Any]) -> str:
             descriptor = dev.get_report_descriptor()
         finally:
             dev.close()
-    except (KeyError, OSError, AttributeError, ValueError, hid.HIDException):
+    except (KeyError, OSError, AttributeError, ValueError, HIDException):
         LOGGER.debug("Impossible d'inspecter l'interface HID %s", info.get("interface_number"), exc_info=True)
         return "unsupported"
     return classify_keyboard_protocol(vid, pid, descriptor)
@@ -203,6 +205,7 @@ def probe_keyboard_interface(info: dict[str, Any]) -> str:
 def open_device(vid: int, pid: int) -> Any:
     try:
         import hid
+        HIDException = getattr(hid, "HIDException", OSError)
     except ImportError as exc:
         raise RuntimeError("Dépendance hidapi manquante.") from exc
     candidates = hid.enumerate(vid, pid)
@@ -221,11 +224,11 @@ def open_device(vid: int, pid: int) -> Any:
                 LOGGER.info("Interface HID ouverte: interface=%s usage=%s", info.get("interface_number"), info.get("usage"))
                 return dev
             dev.close()
-        except (OSError, IOError, hid.HIDException) as exc:
+        except (OSError, IOError, HIDException) as exc:
             LOGGER.warning("Interface HID ignorée (%s): %s", info.get("interface_number"), exc)
             try:
                 dev.close()
-            except (OSError, hid.HIDException):
+            except (OSError, HIDException):
                 LOGGER.debug("Fermeture d'une interface HID ignorée impossible", exc_info=True)
     raise RuntimeError("Aucune interface HID n'a répondu au handshake.")
 
