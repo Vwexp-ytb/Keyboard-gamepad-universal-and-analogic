@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import subprocess
 import threading
 from pathlib import Path
@@ -27,6 +28,36 @@ class ProfileManager:
             except (OSError, ValueError, json.JSONDecodeError):
                 LOGGER.exception("Profil ignoré: %s", path)
         return profiles
+
+    def save_profile(self, name: str, data: dict[str, Any]) -> Path:
+        """Validate and atomically save a profile, preserving a backup of the last version."""
+        if not isinstance(name, str) or not name or name in {".", ".."}:
+            raise ValueError("Nom de profil invalide.")
+        if any(char in name for char in ("/", "\\", ":", "\\0")) or len(name) > 80:
+            raise ValueError("Le nom de profil contient des caractères interdits.")
+        if not isinstance(data, dict):
+            raise ValueError("Le profil doit être un objet JSON.")
+        # Reject NaN/Infinity and non-JSON values before touching the active file.
+        serialized = json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\\n"
+        self.directory.mkdir(parents=True, exist_ok=True)
+        target = self.directory / f"{name}.json"
+        temporary = target.with_suffix(".json.tmp")
+        backup = target.with_suffix(".json.bak")
+        try:
+            with temporary.open("w", encoding="utf-8", newline="\\n") as stream:
+                stream.write(serialized)
+                stream.flush()
+                import os
+                os.fsync(stream.fileno())
+            if target.exists():
+                shutil.copy2(target, backup)
+            temporary.replace(target)
+        finally:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                LOGGER.warning("Impossible de supprimer le fichier temporaire %s", temporary)
+        return target
 
     def matching_profile(self, profile_rules: dict[str, list[str]]) -> str | None:
         """Return first process-matched profile; Windows tasklist is queried sparingly."""
