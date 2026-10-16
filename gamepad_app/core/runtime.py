@@ -197,6 +197,7 @@ class GamepadRuntime:
         profile_watcher: ProcessProfileWatcher | None = None
         try:
             import hid
+            HIDException = getattr(hid, "HIDException", OSError)
             import keyboard
             import vgamepad as vg
             try:
@@ -273,7 +274,7 @@ class GamepadRuntime:
                     last_presence_check = now
                     try:
                         present = bool(hid.enumerate(int(kb["vid"]), int(kb["pid"])))
-                    except (OSError, hid.HIDException):
+                    except (OSError, HIDException):
                         LOGGER.warning("Vérification de présence HID échouée", exc_info=True)
                         present = False
                     if not present:
@@ -281,11 +282,11 @@ class GamepadRuntime:
                         try:
                             if not sdk_mode:
                                 restore_config(device, original, changed)
-                        except (OSError, RuntimeError, hid.HIDException):
+                        except (OSError, RuntimeError, HIDException):
                             LOGGER.warning("Restauration HID après retrait échouée", exc_info=True)
                         try:
                             device.close()
-                        except (OSError, RuntimeError, hid.HIDException):
+                        except (OSError, RuntimeError, HIDException):
                             LOGGER.debug("Fermeture après retrait échouée", exc_info=True)
                         device = None
                         original, changed = None, False
@@ -320,11 +321,11 @@ class GamepadRuntime:
                         device = candidate
                         self.status("Analog keyboard connected." if self.profile.get("language") == "en"
                                     else "Clavier analogique connecté.")
-                    except (RuntimeError, OSError, hid.HIDException) as exc:
+                    except (RuntimeError, OSError, HIDException) as exc:
                         if candidate is not None:
                             try:
                                 candidate.close()
-                            except (OSError, RuntimeError, hid.HIDException):
+                            except (OSError, RuntimeError, HIDException):
                                 LOGGER.debug("Fermeture du périphérique refusé échouée", exc_info=True)
                             del candidate
                         LOGGER.info("Clavier analogique indisponible: %s", exc)
@@ -357,16 +358,16 @@ class GamepadRuntime:
                                                 int(self.profile["anti_deadzone"]))
                                 report = read_report(device, timeout_ms=0)
                                 reads += 1
-                    except (OSError, RuntimeError, hid.HIDException) as exc:
+                    except (OSError, RuntimeError, HIDException) as exc:
                         LOGGER.warning("Clavier HID déconnecté; reconnexion automatique: %s", exc)
                         try:
                             if not sdk_mode:
                                 restore_config(device, original, changed)
-                        except (OSError, RuntimeError, hid.HIDException):
+                        except (OSError, RuntimeError, HIDException):
                             LOGGER.warning("Restauration HID après déconnexion échouée", exc_info=True)
                         try:
                             device.close()
-                        except (OSError, RuntimeError, hid.HIDException):
+                        except (OSError, RuntimeError, HIDException):
                             LOGGER.debug("Fermeture du périphérique HID échouée", exc_info=True)
                         device = None
                         original, changed = None, False
@@ -429,7 +430,7 @@ class GamepadRuntime:
             LOGGER.exception("Dépendance runtime indisponible")
             terminal_status = (f"Runtime dependency error: {exc}" if self.profile.get("language") == "en"
                                else f"Dépendance runtime indisponible: {exc}")
-        except (RuntimeError, OSError, ValueError, KeyError, TypeError, hid.HIDException) as exc:
+        except (RuntimeError, OSError, ValueError, KeyError, TypeError, HIDException) as exc:
             LOGGER.exception("Le runtime manette s'est arrêté sur une erreur")
             terminal_status = (f"Runtime error: {exc}" if self.profile.get("language") == "en"
                                else f"Erreur runtime: {exc}")
@@ -464,11 +465,11 @@ class GamepadRuntime:
                 try:
                     if kb.get("protocol") not in ("wooting_sdk", "sdk_provider"):
                         restore_config(device, original, changed)
-                except (RuntimeError, OSError, hid.HIDException):
+                except (RuntimeError, OSError, HIDException):
                     LOGGER.exception("Restauration de configuration HID échouée")
                 try:
                     device.close()
-                except (RuntimeError, OSError, hid.HIDException):
+                except (RuntimeError, OSError, HIDException):
                     LOGGER.warning("Fermeture du périphérique HID échouée", exc_info=True)
             self.status(terminal_status or (
                 "Controller stopped; keys released." if self.profile.get("language") == "en"
