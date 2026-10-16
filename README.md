@@ -6,11 +6,12 @@ Application Windows en ligne de commande ou avec interface graphique, qui transf
 
 **[Télécharger la dernière version Windows (GitHub Releases)](https://github.com/Vwexp-ytb/Keyboard-gamepad-universal-and-analogic/releases/latest)**
 
-Les versions publiées contiennent les trois fichiers suivants :
+Les versions publiées contiennent les exécutables ci-dessous et un manifeste de contrôle :
 
 - **`ACE60-Gamepad-Setup-<version>.exe`** — installateur Windows, avec raccourcis et désinstallation.
 - **`ACE60-Gamepad-GUI.exe`** — édition portable avec interface graphique.
 - **`ACE60-Gamepad-CLI.exe`** — édition portable dans le terminal.
+- **`SHA256SUMS.txt`** — sommes SHA-256 pour vérifier l’intégrité des fichiers téléchargés.
 
 L’installateur déploie les deux applications, mais **n’installe pas ViGEmBus** : ce pilote noyau doit être installé séparément depuis une source fiable. L’application ne lance pas d’installateur de pilote à ton insu. Pour compiler une version locale, consulte [Build Windows](#build-windows). Une release est générée automatiquement quand un tag versionné (par exemple `v1.2.0`) est poussé sur GitHub ; les pull requests exécutent les tests et le build de validation sans publier de release.
 
