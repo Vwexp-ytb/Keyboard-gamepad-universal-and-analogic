@@ -13,8 +13,12 @@ class SOCDResolver:
     MODES = frozenset({"last_input", "first_input", "neutral", "up_priority"})
 
     def __init__(self, pairs: Iterable[Iterable[str]] | None = None, mode: str = "last_input") -> None:
-        self.pairs = tuple(tuple(pair) for pair in (pairs or [])
-                           if len(tuple(pair)) == 2 and tuple(pair)[0] != tuple(pair)[1])
+        normalized: list[tuple[str, str]] = []
+        for pair in pairs or ():
+            values = tuple(pair)
+            if len(values) == 2 and values[0] != values[1]:
+                normalized.append((str(values[0]), str(values[1])))
+        self.pairs = tuple(normalized)
         self.mode = mode if mode in self.MODES else "last_input"
         self._sequence: dict[str, int] = {}
         self._clock = 0
