@@ -1,0 +1,9 @@
+{
+  "sections": [
+    {"id":"triggers","fr":"Gâchettes","en":"Triggers","actions":[["RT","Gâchette droite RT (accélérer)","Right trigger RT (accelerate)"],["LT","Gâchette gauche LT (freiner)","Left trigger LT (brake)"]] },
+    {"id":"left_stick","fr":"Stick gauche (direction)","en":"Left stick (movement)","actions":[["LS_LEFT","Stick gauche vers la GAUCHE","Left stick LEFT"],["LS_RIGHT","Stick gauche vers la DROITE","Left stick RIGHT"],["LS_UP","Stick gauche vers le HAUT","Left stick UP"],["LS_DOWN","Stick gauche vers le BAS","Left stick DOWN"]]},
+    {"id":"right_stick","fr":"Stick droit (caméra)","en":"Right stick (camera)","actions":[["RS_LEFT","Stick droit vers la GAUCHE","Right stick LEFT"],["RS_RIGHT","Stick droit vers la DROITE","Right stick RIGHT"],["RS_UP","Stick droit vers le HAUT","Right stick UP"],["RS_DOWN","Stick droit vers le BAS","Right stick DOWN"]]},
+    {"id":"buttons","fr":"Boutons","en":"Buttons","actions":[["A","Bouton A","Button A"],["B","Bouton B","Button B"],["X","Bouton X","Button X"],["Y","Bouton Y","Button Y"],["LB","Bouton LB (épaule gauche)","LB button (left shoulder)"],["RB","Bouton RB (épaule droite)","RB button (right shoulder)"],["L3","Clic stick gauche (L3)","Left stick click (L3)"],["R3","Clic stick droit (R3)","Right stick click (R3)"],["START","Start (menu)","Start (menu)"],["BACK","Back (vue)","Back (view)"],["GUIDE","Bouton Xbox (guide)","Xbox guide button"]]},
+    {"id":"dpad","fr":"Croix directionnelle","en":"D-pad","actions":[["DPAD_UP","Croix HAUT","D-pad UP"],["DPAD_DOWN","Croix BAS","D-pad DOWN"],["DPAD_LEFT","Croix GAUCHE","D-pad LEFT"],["DPAD_RIGHT","Croix DROITE","D-pad RIGHT"]]}
+  ]
+}

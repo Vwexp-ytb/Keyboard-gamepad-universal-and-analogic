@@ -1,0 +1,8 @@
+{
+  "curve": "exponential",
+  "deadzone": 1,
+  "button_on": 35,
+  "poll_interval_ms": 1,
+  "socd": {"mode": "last_input", "pairs": [["LS_LEFT", "LS_RIGHT"]]},
+  "processes": ["FortniteClient-Win64-Shipping.exe"]
+}

@@ -1,0 +1,8 @@
+{
+  "curve": "linear",
+  "deadzone": 2,
+  "poll_interval_ms": 2,
+  "mouse_aim_curve": "precision",
+  "mouse_smoothing_ms": 12,
+  "processes": ["acs.exe", "assettocorsa.exe", "acc.exe"]
+}

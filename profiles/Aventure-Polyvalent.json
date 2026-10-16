@@ -1,0 +1,8 @@
+{
+  "curve": "linear",
+  "deadzone": 4,
+  "button_on": 50,
+  "poll_interval_ms": 1,
+  "socd": {"mode": "off", "pairs": []},
+  "processes": []
+}
