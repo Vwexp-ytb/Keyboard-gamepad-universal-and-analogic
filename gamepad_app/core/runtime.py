@@ -18,6 +18,7 @@ from gamepad_app.features.dks import DKSEngine
 from gamepad_app.features.socd import SOCDResolver
 from gamepad_app.features.macros import MacroEngine
 from gamepad_app.core.config import CONFIG_PATH, load_config
+from gamepad_app.core.diagnostics import LatencyMonitor
 from gamepad_app.profiles.manager import ConfigReloader, ProcessProfileWatcher
 
 LOGGER = logging.getLogger(__name__)
@@ -162,6 +163,7 @@ class GamepadRuntime:
         self.scan_to_hid = scan_to_hid
         self.status = status
         self.stop_event = threading.Event()
+        self.latency_monitor = LatencyMonitor(capacity=4096)
         self.thread = threading.Thread(target=self._run, name="gamepad-runtime", daemon=True)
         self.mouse_lock = threading.Lock()
         self.mouse_delta = [0.0, 0.0]
@@ -253,6 +255,7 @@ class GamepadRuntime:
             last_state: tuple[int, ...] | None = None
             last_mouse_update = time.monotonic()
             while not self.stop_event.is_set():
+                cycle_started_ns = time.perf_counter_ns()
                 with self._reload_lock:
                     pending_profile, self._pending_profile = self._pending_profile, None
                 if pending_profile is not None:
@@ -418,6 +421,8 @@ class GamepadRuntime:
                 if state != last_state:
                     self._update_gamepad(gamepad, button_map, vals, int(self.profile["button_on"]))
                     last_state = state
+                # Measures processing cost, excluding the configured sleep interval.
+                self.latency_monitor.measure_end(cycle_started_ns)
                 interval = max(0.001, min(0.020, float(self.profile["poll_interval_ms"]) / 1000.0))
                 self.stop_event.wait(interval)
         except ImportError as exc:
