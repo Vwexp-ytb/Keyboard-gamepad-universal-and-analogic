@@ -227,8 +227,9 @@ def _upgrade(data: dict[str, Any]) -> dict[str, Any]:
         pairs = socd.get("pairs", []) if isinstance(socd, dict) else []
         clean_pairs = [[a, b] for pair in pairs if isinstance(pair, list) and len(pair) == 2
                        for a, b in [pair] if a in ACTION_IDS and b in ACTION_IDS and a != b][:8]
-        profile["socd"] = {"mode": "last_input" if isinstance(socd, dict) and
-                            socd.get("mode") == "last_input" else "off", "pairs": clean_pairs}
+        profile["socd"] = {"mode": socd.get("mode", "off") if isinstance(socd, dict) and
+                            socd.get("mode") in ("off", "last_input", "first_input", "neutral", "up_priority")
+                            else "off", "pairs": clean_pairs}
         processes = profile.get("processes", [])
         profile["processes"] = [str(name)[:128] for name in processes[:20]
                                  if isinstance(name, str) and name.lower().endswith(".exe")]

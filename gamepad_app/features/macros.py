@@ -7,10 +7,16 @@ from typing import Any
 class MacroEngine:
     """Schedule bounded, sequential controller-action macros on depth crossings."""
 
+    MAX_PENDING_EVENTS = 512
+
     def __init__(self, definitions: list[dict[str, Any]] | None = None) -> None:
         self.definitions = definitions or []
         self.previous: dict[int, int] = {}
         self.events: list[tuple[float, float, str]] = []
+
+    def cancel_all(self) -> None:
+        """Cancel queued macro actions; the next update returns no macro-held actions."""
+        self.events.clear()
 
     def update(self, depths: dict[int, int], now: float | None = None) -> set[str]:
         now = time.monotonic() if now is None else now
@@ -23,6 +29,8 @@ class MacroEngine:
                 for step in macro["steps"]:
                     cursor += step["delay_ms"] / 1000
                     end = cursor + step["duration_ms"] / 1000
+                    if len(self.events) >= self.MAX_PENDING_EVENTS:
+                        break
                     self.events.append((cursor, end, step["action"]))
                     cursor = end
         for macro in self.definitions:

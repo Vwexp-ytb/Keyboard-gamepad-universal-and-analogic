@@ -44,6 +44,18 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path dist/installers | Out-Null
           iscc "/DAppVersion=$env:APP_VERSION" installer/ACE60-Gamepad.iss
+      - name: Generate SHA-256 checksums
+        shell: pwsh
+        run: |
+          $files = @(
+            "dist/ACE60-Gamepad-CLI.exe",
+            "dist/ACE60-Gamepad-GUI.exe"
+          ) + @(Get-ChildItem "dist/installers/*.exe" | ForEach-Object { $_.FullName })
+          $lines = foreach ($file in $files) {
+            $hash = (Get-FileHash -Algorithm SHA256 $file).Hash.ToLowerInvariant()
+            "$hash  $(Split-Path $file -Leaf)"
+          }
+          $lines | Set-Content -Encoding ascii dist/SHA256SUMS.txt
       - name: Upload build artifacts
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
@@ -53,6 +65,7 @@ jobs:
             dist/ACE60-Gamepad-CLI.exe
             dist/ACE60-Gamepad-GUI.exe
             dist/installers/*.exe
+            dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7
       - name: Publish GitHub Release
@@ -65,3 +78,4 @@ jobs:
             dist/ACE60-Gamepad-CLI.exe
             dist/ACE60-Gamepad-GUI.exe
             dist/installers/*.exe
+            dist/SHA256SUMS.txt

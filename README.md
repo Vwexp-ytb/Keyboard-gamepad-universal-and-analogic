@@ -6,15 +6,24 @@ Application Windows en ligne de commande ou avec interface graphique, qui transf
 
 **[Télécharger la dernière version Windows (GitHub Releases)](https://github.com/Vwexp-ytb/Keyboard-gamepad-universal-and-analogic/releases/latest)**
 
-Les versions publiées contiennent les trois fichiers suivants :
+Les versions publiées contiennent les exécutables ci-dessous et un manifeste de contrôle :
 
 - **`ACE60-Gamepad-Setup-<version>.exe`** — installateur Windows, avec raccourcis et désinstallation.
 - **`ACE60-Gamepad-GUI.exe`** — édition portable avec interface graphique.
 - **`ACE60-Gamepad-CLI.exe`** — édition portable dans le terminal.
+- **`SHA256SUMS.txt`** — sommes SHA-256 pour vérifier l’intégrité des fichiers téléchargés.
 
 L’installateur déploie les deux applications, mais **n’installe pas ViGEmBus** : ce pilote noyau doit être installé séparément depuis une source fiable. L’application ne lance pas d’installateur de pilote à ton insu. Pour compiler une version locale, consulte [Build Windows](#build-windows). Une release est générée automatiquement quand un tag versionné (par exemple `v1.2.0`) est poussé sur GitHub ; les pull requests exécutent les tests et le build de validation sans publier de release.
 
 ---
+
+## Fiabilité, diagnostics et compatibilité
+
+Le moteur propose des utilitaires de calibration analogique par touche (`gamepad_app.core.analog`) et un filtre d'hystérésis pour éviter les changements d'état dus au bruit autour d'un seuil. Le résolveur SOCD accepte les modes `last_input`, `first_input`, `neutral` et `up_priority`; la politique se configure par profil via `socd.mode` et `socd.pairs`. Les paires non verticales utilisent une sortie neutre en mode `up_priority` afin de ne pas inventer de priorité.
+
+Le module `gamepad_app.core.diagnostics` fournit un échantillonneur de latence borné avec moyenne, P50, P95, P99 et maximum, ainsi qu'un micro-benchmark pour les fonctions isolées. Ces outils ne sont pas automatiquement exécutés dans la boucle de jeu. Ils mesurent le temps de code; **ils ne constituent pas à eux seuls une mesure de bout en bout clavier-vers-manette**.
+
+Le statut de compatibilité est spécifique au chemin de lecture, au modèle et au firmware. La présence d'un clavier à switches Hall Effect ne garantit pas que ses valeurs analogiques soient accessibles à un logiciel tiers. La feuille de route et les critères de validation se trouvent dans [la roadmap d'ingénierie](docs/roadmap.md). Les signalements de sécurité sont décrits dans [SECURITY.md](SECURITY.md).
 
 ## Démarrage
 
