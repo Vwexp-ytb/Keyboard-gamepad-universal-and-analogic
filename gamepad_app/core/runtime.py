@@ -219,7 +219,7 @@ class GamepadRuntime:
             dks_engine = DKSEngine(self.profile.get("dks", {}))
             macro_engine = MacroEngine(self.profile.get("macros", []))
             socd_config = self.profile.get("socd", {})
-            socd_resolver = SOCDResolver(socd_config.get("pairs", [])) if socd_config.get("mode") == "last_input" else None
+            socd_resolver = SOCDResolver(socd_config.get("pairs", []), socd_config.get("mode", "last_input")) if socd_config.get("mode") in SOCDResolver.MODES else None
             self._install_hooks(keyboard)
             gamepad = vg.VX360Gamepad()
             button_map = {key: getattr(vg.XUSB_BUTTON, val) for key, val in XUSB_BUTTONS.items()}
