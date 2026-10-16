@@ -33,18 +33,18 @@ class ProfileManager:
         """Validate and atomically save a profile, preserving a backup of the last version."""
         if not isinstance(name, str) or not name or name in {".", ".."}:
             raise ValueError("Nom de profil invalide.")
-        if any(char in name for char in ("/", "\\", ":", "\\0")) or len(name) > 80:
+        if any(char in name for char in ("/", "\\", ":", "\0")) or len(name) > 80:
             raise ValueError("Le nom de profil contient des caractères interdits.")
         if not isinstance(data, dict):
             raise ValueError("Le profil doit être un objet JSON.")
         # Reject NaN/Infinity and non-JSON values before touching the active file.
-        serialized = json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\\n"
+        serialized = json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         self.directory.mkdir(parents=True, exist_ok=True)
         target = self.directory / f"{name}.json"
         temporary = target.with_suffix(".json.tmp")
         backup = target.with_suffix(".json.bak")
         try:
-            with temporary.open("w", encoding="utf-8", newline="\\n") as stream:
+            with temporary.open("w", encoding="utf-8", newline="\n") as stream:
                 stream.write(serialized)
                 stream.flush()
                 import os
